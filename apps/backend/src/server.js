@@ -10,6 +10,8 @@ import authRoutes from './routes/auth.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import orderRoutes from './routes/orders.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import catalogRoutes from './routes/catalog.routes.js';
+import panelRoutes from './routes/panel.routes.js';
 import { runSchedulers } from './cron/schedulers.js';
 
 const app = express();
@@ -27,6 +29,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/catalog', catalogRoutes);
+app.use('/api/panel', panelRoutes);
 
 io.on('connection', (socket) => socket.emit('connected', { ok: true }));
 runSchedulers(io, prisma);

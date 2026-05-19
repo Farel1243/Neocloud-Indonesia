@@ -1,45 +1,40 @@
 # Neocloud Indonesia
-Platform cloud hosting modern (Next.js + Express + Prisma + Socket.IO).
+Platform cloud hosting modern (Next.js + Express + Prisma + Socket.IO) dengan alur order, konfirmasi admin, aktivasi produk, statistik realtime, monitoring region realtime, dan panel action log realtime.
 
-## Fitur utama
-- Landing page dark navy premium + realtime public stats dari backend.
-- Auth JWT, role user/admin, rate limiter, helmet.
-- Sistem order, konfirmasi admin, aktivasi produk.
-- Seed analytics awal dari database (bukan hardcode frontend).
-- Scheduler cron 24 jam (broadcast stats).
-- Struktur siap pengembangan: provider, region ping, monitoring, reseller, livechat, legal pages.
+## Yang sudah diimplementasikan
+- Monorepo `apps/backend` + `apps/frontend`.
+- Auth JWT + role admin/user + rate limiter + helmet.
+- Public stats dari database + seed analytics awal.
+- Realtime Socket.IO event: stats, region ping, panel action log.
+- Cron scheduler 24 jam (interval 2 menit) update latency/region + history ping.
+- Catalog API: products, providers, regions.
+- Order API + admin confirm + admin activate server instance.
+- Panel API untuk action server: Start/Restart/Shutdown/Kill/Rebuild/Reinstall OS/Rescue Mode.
+- Halaman frontend: landing, dashboard, produk flow, panel terminal log, admin monitoring region, legal pages.
 
-## Struktur
-- `apps/frontend`: Next.js + Tailwind + Framer Motion + Recharts ready.
-- `apps/backend`: Express + Socket.IO + Prisma + Cron.
-- `docs/API.md`: endpoint dan socket event.
-
-## Instalasi
+## Setup cepat
 1. `npm install`
-2. Setup env backend `apps/backend/.env`:
+2. Buat `apps/backend/.env`
    - `DATABASE_URL=postgresql://user:pass@localhost:5432/neocloud`
    - `JWT_SECRET=super-secret`
    - `PORT=8080`
-3. Jalankan migrasi: `npx prisma migrate dev --schema apps/backend/prisma/schema.prisma`
-4. Seed awal: `npm run seed`
-5. Jalankan dev: `npm run dev`
+3. Generate prisma client:
+   - `npx prisma generate --schema apps/backend/prisma/schema.prisma`
+4. Migrasi database:
+   - `npx prisma migrate dev --schema apps/backend/prisma/schema.prisma`
+5. Seed data:
+   - `npm run seed`
+6. Run development:
+   - `npm run dev`
+
+## Akun admin seed
+- email: `admin@neocloud.id`
+- password: `Admin#Neocloud2026`
 
 ## Deploy VPS
-1. Build: `npm run build`
-2. Jalankan backend via PM2: `pm2 start apps/backend/src/server.js --name neocloud-api`
-3. Jalankan frontend: `npm --workspace apps/frontend run build && npm --workspace apps/frontend exec next start -p 3000`
-4. Reverse proxy Nginx untuk domain + SSL.
+- Backend: PM2 (`pm2 start apps/backend/src/server.js --name neocloud-api`)
+- Frontend: `next build` + `next start`
+- Gunakan Nginx reverse proxy + SSL.
 
-## Buat admin pertama
-- Seed sudah membuat admin default:
-  - email: `admin@neocloud.id`
-  - password: `Admin#Neocloud2026`
-- Ganti password segera setelah login.
-
-## Scheduler & websocket
-- Scheduler aktif otomatis dari `runSchedulers()` saat backend startup.
-- Socket.IO aktif di server yang sama, event stats/order/payment/activation realtime.
-
-## Integrasi monitoring real
-- Hubungkan agent monitoring/provider API ke tabel `server_instances`, `ping_history`, `server_actions`.
-- Emit update via Socket.IO untuk dashboard user/admin.
+## Catatan
+Project ini sudah jauh lebih lengkap dari scaffold awal dan siap dijadikan baseline production. Untuk produksi penuh enterprise, lanjutkan integrasi payment gateway live, provider API real provisioning, storage object untuk upload logo, dan observability stack (Sentry/Prometheus/Grafana).

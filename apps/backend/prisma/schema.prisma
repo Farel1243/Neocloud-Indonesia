@@ -1,15 +1,170 @@
 generator client { provider = "prisma-client-js" }
 datasource db { provider = "postgresql" url = env("DATABASE_URL") }
 
-model User { id String @id @default(cuid()) email String @unique password String name String role String @default("user") whatsapp String? balance Float @default(0) createdAt DateTime @default(now()) }
-model Order { id String @id @default(cuid()) userId String status String total Float productType String providerId String? regionId String? createdAt DateTime @default(now()) }
-model Payment { id String @id @default(cuid()) orderId String @unique method String status String invoiceId String }
-model Invoice { id String @id @default(cuid()) orderId String @unique invoiceNumber String @unique expiredAt DateTime status String }
-model Product { id String @id @default(cuid()) name String category String price Float stock Int badge String? active Boolean @default(true) }
-model Provider { id String @id @default(cuid()) name String logoUrl String? rating Float @default(4.5) startingPrice Float active Boolean @default(true) }
-model Region { id String @id @default(cuid()) name String countryCode String latencyMs Int @default(0) status String @default("Online") }
-model PublicStats { id Int @id @default(1) totalProductsSold Int @default(1284) totalServersActive Int @default(326) totalClientsActive Int @default(892) totalOrdersSuccess Int @default(1116) totalVpsOnline Int @default(298) totalRegionsOnline Int @default(20) totalProvidersActive Int @default(28) totalRevenue Float @default(84250000) pingGlobal String @default("12ms") uptimeGlobal String @default("99.9%") trafficGlobal String @default("4.8TB") activeNode Int @default(64) }
-model ServerInstance { id String @id @default(cuid()) orderId String @unique ipAddress String? username String? password String? port Int? provider String? region String? os String? ram String? cpu String? disk String? bandwidth String? expiredAt DateTime? status String @default("Activation Required") }
-model ServerAction { id String @id @default(cuid()) instanceId String action String status String log String createdAt DateTime @default(now()) }
-model PingHistory { id String @id @default(cuid()) regionId String latencyMs Int packetLoss Float uptime Float trafficLoad Float cpuUsage Float ramUsage Float createdAt DateTime @default(now()) }
-model LegalPage { id String @id @default(cuid()) slug String @unique title String content String updatedAt DateTime @updatedAt }
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("user")
+  whatsapp  String?
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  name            String
+  category        String
+  description     String?
+  cpu             String
+  ram             String
+  disk            String
+  bandwidth       String
+  networkSpeed    String
+  virtualization  String
+  recommendedUse  String
+  price           Float
+  stock           Int
+  badge           String?
+  active          Boolean  @default(true)
+  providerIds     String[]
+  regionIds       String[]
+  osOptions       String[]
+  createdAt       DateTime @default(now())
+}
+
+model Provider {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  logoUrl        String?
+  rating         Float    @default(4.5)
+  startingPrice  Float
+  reputation     String?
+  strengths      String?
+  recommendation String?
+  active         Boolean  @default(true)
+  stockAvailable Boolean  @default(true)
+  regionIds      String[]
+}
+
+model Region {
+  id             String   @id @default(cuid())
+  name           String   @unique
+  countryCode    String
+  targetHost     String
+  status         String   @default("Online")
+  latencyMs      Int      @default(0)
+  packetLoss     Float    @default(0)
+  uptime         Float    @default(99.9)
+  trafficLoad    Float    @default(0)
+  activeNode     Int      @default(0)
+  cpuUsage       Float    @default(0)
+  ramUsage       Float    @default(0)
+  lastChecked    DateTime?
+  maintenance    Boolean  @default(false)
+}
+
+model Order {
+  id                String   @id @default(cuid())
+  userId             String
+  productId          String
+  providerId         String
+  regionId           String
+  os                 String
+  duration           String
+  requirements       String
+  status             String
+  total              Float
+  createdAt          DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  method    String
+  status    String
+  createdAt DateTime @default(now())
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  orderId        String   @unique
+  invoiceNumber  String   @unique
+  amount         Float
+  expiredAt      DateTime
+  status         String
+}
+
+model PublicStats {
+  id                  Int    @id @default(1)
+  totalProductsSold   Int    @default(1284)
+  totalServersActive  Int    @default(326)
+  totalClientsActive  Int    @default(892)
+  totalOrdersSuccess  Int    @default(1116)
+  totalVpsOnline      Int    @default(298)
+  totalRegionsOnline  Int    @default(20)
+  totalProvidersActive Int   @default(28)
+  totalRevenue        Float  @default(84250000)
+  pingGlobal          String @default("12ms")
+  uptimeGlobal        String @default("99.9%")
+  trafficGlobal       String @default("4.8TB")
+  activeNode          Int    @default(64)
+}
+
+model ServerInstance {
+  id         String   @id @default(cuid())
+  orderId     String   @unique
+  ipAddress   String?
+  username    String?
+  password    String?
+  port        Int?
+  provider    String?
+  region      String?
+  os          String?
+  ram         String?
+  cpu         String?
+  disk        String?
+  bandwidth   String?
+  expiredAt   DateTime?
+  status      String   @default("Activation Required")
+  createdAt   DateTime @default(now())
+}
+
+model ServerAction {
+  id          String   @id @default(cuid())
+  instanceId   String
+  action       String
+  status       String
+  log          String
+  createdAt    DateTime @default(now())
+}
+
+model PingHistory {
+  id          String   @id @default(cuid())
+  regionId     String
+  latencyMs    Int
+  packetLoss   Float
+  uptime       Float
+  trafficLoad  Float
+  cpuUsage     Float
+  ramUsage     Float
+  createdAt    DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId     String?
+  title      String
+  message    String
+  level      String
+  createdAt  DateTime @default(now())
+}
+
+model LegalPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   String
+  updatedAt DateTime @updatedAt
+}
