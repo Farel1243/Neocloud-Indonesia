@@ -1,0 +1,13 @@
+{
+  "name": "neocloud-indonesia",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently \"npm --workspace apps/backend run dev\" \"npm --workspace apps/frontend run dev\"",
+    "build": "npm -ws run build",
+    "seed": "npm --workspace apps/backend run seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
